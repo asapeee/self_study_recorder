@@ -1,13 +1,5 @@
-import random
-import cv2
-import numpy as np
-import torch
-import torchvision
-import os
-import io
 import base64
 from io import BytesIO
-
 
 from datetime import datetime
 
@@ -33,8 +25,6 @@ from sqlalchemy.exc import SQLAlchemyError
 from flask_login import current_user, login_required
 
 import matplotlib.pyplot as plt
-import numpy as np
-
 def fig_to_base64_image(fig):
     io = BytesIO()
     fig.savefig(io, format="png")
