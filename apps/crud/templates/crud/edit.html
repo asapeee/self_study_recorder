@@ -1,0 +1,36 @@
+{% extends 'recorder/base.html' %}
+{% block title %}自習時間修正{% endblock %}
+{% block content %}
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+<ul>
+    {% for message in messages %}
+    <li class="flash">{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+{% endwith %}
+<a href="{{ url_for('crud.check_student', student_name=student_record.studentname) }}">戻る</a>
+<h2>{{ student_record.studentname }}</h2>
+<form action="{{ url_for('crud.edit_student_record', student_name=student_record.studentname, student_records_id=student_record.id) }}" method="POST" novalidate="novalidate">
+    {{ edit_form.csrf_token }}
+    <p>
+        {{ edit_form.started_at.label }} {{ edit_form.started_at(placeholder="自習開始時間") }}
+    </p>
+    {% for error in edit_form.started_at.errors %}
+    <span style="color: red;">{{ error }}</span>
+    {% endfor %}
+    <p>
+        {{ edit_form.finished_at.label }} {{ edit_form.finished_at(placeholder="自習終了時間")}}
+    </p>
+    {% for error in edit_form.finished_at.errors %}
+    <span style="color: red;">{{ error }}</span>
+    {% endfor %}
+    <p><input type="submit" value="修正" /></p>
+</form>
+
+<form action="{{ url_for('crud.delete_student_record', student_name=student_record.studentname, student_records_id=student_record.id) }}" method="POST">
+    {{ delete_student_record_form.csrf_token }}
+    <input type="submit" value="自習時間削除">
+</form>
+{% endblock %}

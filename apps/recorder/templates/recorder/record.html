@@ -1,0 +1,53 @@
+{% extends 'recorder/base.html' %}
+{% block title %}自習時間記録{% endblock %}
+{% block content %}
+<a href="{{ url_for('recorder.index') }}">戻る</a>
+
+<h2>{{ student.studentname }}</h2>
+
+<p>自習開始時刻: {{ student_record.started_at }}</p>
+
+<p>自習終了時刻: {{ student_record.finished_at }}</p>
+
+{% set ns = namespace(student_day_record_total = 0)  %}
+{% for student_day_record in student_day_records %}
+    {% set ns.student_day_record_total = ns.student_day_record_total + student_day_record.study_time %}
+{% endfor %}
+<p align="right">今日の自習時間：{{ (ns.student_day_record_total / 3600)|int }}時間 {{ ((ns.student_day_record_total % 3600) /60)|int }}分</p>
+
+
+<!--初めて自習記録を作るとき-->
+{% if not student_record.started_at %}
+    {% if not student_record.finished_at %}
+        <form action="{{ url_for('recorder.start', student_name=student.studentname) }}" method="POST">
+            {{ start_form.csrf_token }}
+            {{ start_form.submit(class="btn btn-primary") }}
+        </form>
+    {% endif %}
+{% endif %}
+
+<!--新しく自習記録を作るとき-->
+{% if student_record.started_at %}
+    {% if student_record.finished_at %}
+        <form action="{{ url_for('recorder.start', student_name=student.studentname) }}" method="POST">
+            {{ start_form.csrf_token }}
+            {{ start_form.submit(class="btn btn-primary") }}
+        </form>
+    {% endif %}
+{% endif %}
+<p></p>
+
+<!--自習を終えるとき-->
+{% if student_record.started_at %}
+    {% if not student_record.finished_at %}
+        <form action="{{ url_for('recorder.finish', student_name=student.studentname) }}" method="POST">
+            {{ finish_form.csrf_token }}
+            {{ finish_form.submit(class="btn btn-primary") }}
+        </form>
+    {% endif %}
+{% endif %}
+
+<div style="margin-top: 50px;">
+<img src="data:image/png;base64, {{ img }}">
+</div>
+{% endblock %}

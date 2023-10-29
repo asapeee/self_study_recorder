@@ -1,0 +1,82 @@
+{% extends 'recorder/base.html' %}
+{% block title %}生徒チェック{% endblock %}
+{% block content %}
+<a href="{{ url_for('crud.students') }}">生徒一覧へ</a>
+
+<h2>{{ student.studentname }}</h2>
+
+
+{% set ns = namespace(student_day_record_total = 0)  %}
+{% for student_day_record in student_day_records %}
+    {% set ns.student_day_record_total = ns.student_day_record_total + student_day_record.study_time %}
+{% endfor %}
+<p align="right">今日の自習時間：{{ (ns.student_day_record_total / 3600)|int }}時間 {{ ((ns.student_day_record_total % 3600) /60)|int }}分</p>
+
+<style>
+    .scroll-table{
+        overflow: scroll;
+        width: 480px;
+        height: 200px;
+    }
+    .scroll-table table{
+        margin: 0;
+        border-spacing: 0;
+    
+    }
+    .scroll-table td{
+        white-space: nowrap;
+        border-right: 1px solid #999;
+        border-bottom: 1px solid #999;
+        background: #FFF;
+        padding: 5px;
+    }
+    .scroll-table th{
+        white-space: nowrap;
+        border-right: 1px solid #999;
+        border-bottom: 1px solid #999;
+        background: #f2f2f2;
+        position: sticky;
+        top: 0;
+        left: 0;
+    }
+    .scroll-table tr:first-child th{
+        border-top: 1px solid #999;
+    }
+    .scroll-table th:first-child{
+        border-left: 1px solid #999;
+    }
+    .scroll-table tr:first-child th:first-child{
+        z-index: 1;
+    }
+</style>
+<div class="scroll-table">
+    <table >
+        <tr>
+            <th>自習開始時間</th>
+            <th>自習終了時間</th>
+            <th></th>
+        </tr>
+        {% for student_record in student_records %}
+        <tr>
+            <td>
+                {{ student_record.started_at }}
+            </td>
+            <td>
+                {{ student_record.finished_at}}
+            </td>
+            <td>
+                <a href="{{ url_for('crud.edit_student_record', student_name=student_record.studentname, student_records_id=student_record.id) }}">修正</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+
+<p></p>
+
+<form action="{{ url_for('crud.delete_student', student_name=student.studentname) }}" method="POST">
+    {{ delete_student_form.csrf_token }}
+    {{ delete_student_form.submit(class="btn btn-danger") }}
+</form>
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends 'recorder/base.html' %}
+{% block title %}生徒新規作成{% endblock %}
+{% block content %}
+<a href="{{ url_for('crud.students') }}">生徒一覧へ</a>
+<h2>生徒新規作成</h2>
+<form
+    action="{{ url_for('crud.create_student') }}"
+    method="POST"
+    novalidate="novalidate"
+>
+    {{ form.csrf_token }}
+    <p>
+        {{ form.studentname.label }} {{ form.studentname(placeholder='生徒名') }}
+    </p>
+    {% for error in form.studentname.errors %}
+    <span style="color: red;">{{ error }}</span>
+    {% endfor %}
+    <p>
+        {{ form.studentname_hiragana.label }} {{ form.studentname_hiragana(placeholder='生徒名(ひらがな)') }}
+    </p>
+    {% for error in form.studentname_hiragana.errors %}
+    <span style="color: red;">{{ error }}</span>
+    {% endfor %}
+    <p>{{ form.submit() }}</p>
+    </form>
+{% endblock %}

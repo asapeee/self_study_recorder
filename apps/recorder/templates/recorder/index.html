@@ -1,0 +1,46 @@
+{% extends 'recorder/base.html' %}
+{% block content %}
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+<ul>
+    {% for message in messages %}
+    <li class="flash">{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+{% endwith %}
+<h2>自習時間を記録しよう！</h2>
+
+{{ month }}月のランキング
+{% for student in student_month_ranking %}
+    <p>{{ loop.index0 + 1 }}位  {{ student.studentname }}さん  {{ (student.total_time / 3600)|int }}時間 {{ (student.total_time / 60)|int }}分</p>
+{% endfor %}
+
+<form
+    action="{{ url_for('recorder.index') }}"
+    method="POST"
+    novalidate="novalidate"
+>
+    {{ mypage_form.csrf_token }}
+    <p>
+        {{ mypage_form.studentname_hiragana.label }} {{ mypage_form.studentname_hiragana(placeholder='生徒名(ひらがな)') }}
+    </p>
+    {% for error in mypage_form.studentname_hiragana.errors %}
+    <span style="color: red;">{{ error }}</span>
+    {% endfor %}
+    <p>{{ mypage_form.submit() }}</p>
+</form>
+
+<table border="1">
+    {% if student_records %}
+        <tr>【自習中】</tr>
+    {% endif %}
+    {% for student_record in student_records %}
+    <tr>
+        <td>
+            <a href="{{ url_for('recorder.record', student_name=student_record.studentname) }}">{{ student_record.studentname }}</a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

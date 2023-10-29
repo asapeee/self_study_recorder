@@ -1,0 +1,25 @@
+{% extends 'recorder/base.html' %}
+{% block title %}生徒一覧{% endblock %}
+{% block content %}
+<h2>生徒一覧</h2>
+
+<a href="{{ url_for('crud.create_student') }}">生徒新規作成</a>
+<a href="{{ url_for('recorder.index') }}">トップページへ戻る</a>
+
+<table border="1">
+    <tr>
+        <th>生徒名</th>
+        <th>生徒名(ひらがな)</th>
+    </tr>
+    {% for student in students %}
+    <tr>
+        <td>
+            <a href="{{ url_for('crud.check_student', student_name=student.studentname) }}">{{ student.studentname }}</a>
+        </td>
+        <td>
+            {{ student.studentname_hiragana}}
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}
