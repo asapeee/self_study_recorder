@@ -13,7 +13,7 @@
 
 {{ month }}月のランキング
 {% for student in student_month_ranking %}
-    <p>{{ loop.index0 + 1 }}位  {{ student.studentname }}さん  {{ (student.total_time / 3600)|int }}時間 {{ (student.total_time / 60)|int }}分</p>
+    <p>{{ loop.index0 + 1 }}位  {{ student.studentname }}さん  {{ (student.total_time / 3600)|int }}時間 {{ ((student.total_time % 3600) /60)|int }}分</p>
 {% endfor %}
 
 <form
@@ -23,7 +23,7 @@
 >
     {{ mypage_form.csrf_token }}
     <p>
-        {{ mypage_form.studentname_hiragana.label }} {{ mypage_form.studentname_hiragana(placeholder='生徒名(ひらがな)') }}
+        {{ mypage_form.studentname_hiragana.label }} {{ mypage_form.studentname_hiragana(placeholder='名前(ひらがな)') }}
     </p>
     {% for error in mypage_form.studentname_hiragana.errors %}
     <span style="color: red;">{{ error }}</span>
