@@ -10,7 +10,10 @@
 {% for student_day_record in student_day_records %}
     {% set ns.student_day_record_total = ns.student_day_record_total + student_day_record.study_time %}
 {% endfor %}
-<p align="right">今日の自習時間：{{ (ns.student_day_record_total / 3600)|int }}時間 {{ ((ns.student_day_record_total % 3600) /60)|int }}分</p>
+
+<div style="margin-bottom: 30px;">
+    <h4>今日の自習時間：{{ (ns.student_day_record_total / 3600)|int }}時間 {{ ((ns.student_day_record_total % 3600) /60)|int }}分</h4>
+</div>
 
 <style>
     .scroll-table{

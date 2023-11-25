@@ -13,10 +13,10 @@ class StudentForm(FlaskForm):
         
     )
 
-    studentname_hiragana = StringField(
-        '生徒名(ひらがな)',
+    studentname_katakana = StringField(
+        '生徒名(カタカナ)',
         validators=[
-            DataRequired(message='生徒名(ひらがな)は必須です．'),
+            DataRequired(message='生徒名(カタカナ)は必須です．'),
             length(max=30, message='30文字以内で入力してください．'),
         ],
         

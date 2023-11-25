@@ -5,16 +5,18 @@
 
 <h2>{{ student.studentname }}</h2>
 
-<p>自習開始時刻: {{ student_record.started_at }}</p>
-
-<p>自習終了時刻: {{ student_record.finished_at }}</p>
+<div style="margin-top: 20px;">
+    <p>自習開始時刻: {{ student_record.started_at }}</p>
+    <p>自習終了時刻: {{ student_record.finished_at }}</p>
+</div>
 
 {% set ns = namespace(student_day_record_total = 0)  %}
 {% for student_day_record in student_day_records %}
     {% set ns.student_day_record_total = ns.student_day_record_total + student_day_record.study_time %}
 {% endfor %}
-<p align="right">今日の自習時間：{{ (ns.student_day_record_total / 3600)|int }}時間 {{ ((ns.student_day_record_total % 3600) /60)|int }}分</p>
-
+<div style="margin-bottom: 30px;">
+    <h4>今日の自習時間：{{ (ns.student_day_record_total / 3600)|int }}時間 {{ ((ns.student_day_record_total % 3600) /60)|int }}分</h4>
+</div>
 
 <!--初めて自習記録を作るとき-->
 {% if not student_record.started_at %}
@@ -47,7 +49,7 @@
     {% endif %}
 {% endif %}
 
-<div style="margin-top: 50px;">
+<div style="margin-top: 30px;">
 <img src="data:image/png;base64, {{ img }}">
 </div>
 {% endblock %}

@@ -11,36 +11,114 @@
 {% endwith %}
 <h2>自習時間を記録しよう！</h2>
 
-{{ month }}月のランキング
+<div style="margin-top: 20px;">
+<h3>{{ month }}月のランキング</h3>
 {% for student in student_month_ranking %}
-    <p>{{ loop.index0 + 1 }}位  {{ student.studentname }}さん  {{ (student.total_time / 3600)|int }}時間 {{ ((student.total_time % 3600) /60)|int }}分</p>
+    <h4>{{ loop.index0 + 1 }}位   {{ student.studentname }}さん   {{ (student.total_time / 3600)|int }}時間 {{ ((student.total_time % 3600) /60)|int }}分</h4>
 {% endfor %}
+</div>
 
-<form
-    action="{{ url_for('recorder.index') }}"
-    method="POST"
-    novalidate="novalidate"
->
-    {{ mypage_form.csrf_token }}
-    <p>
-        {{ mypage_form.studentname_hiragana.label }} {{ mypage_form.studentname_hiragana(placeholder='名前(ひらがな)') }}
-    </p>
-    {% for error in mypage_form.studentname_hiragana.errors %}
-    <span style="color: red;">{{ error }}</span>
-    {% endfor %}
-    <p>{{ mypage_form.submit() }}</p>
-</form>
 
-<table border="1">
-    {% if student_records %}
-        <tr>【自習中】</tr>
-    {% endif %}
-    {% for student_record in student_records %}
-    <tr>
-        <td>
-            <a href="{{ url_for('recorder.record', student_name=student_record.studentname) }}">{{ student_record.studentname }}</a>
-        </td>
-    </tr>
-    {% endfor %}
-</table>
+
+<style>
+    .scroll-table{
+        overflow: scroll;
+        width: 450px;
+        height: 220px;
+    }
+    .scroll-table table{
+        margin: 0;
+        border-spacing: 0;
+    
+    }
+    .scroll-table td{
+        white-space: nowrap;
+        border-right: 1px solid #999;
+        border-bottom: 1px solid #999;
+        background: #FFF;
+        padding: 5px;
+    }
+    .scroll-table th{
+        white-space: nowrap;
+        border-right: 1px solid #999;
+        border-bottom: 1px solid #999;
+        background: #f2f2f2;
+        position: sticky;
+        top: 0;
+        left: 0;
+    }
+    .scroll-table tr:first-child th{
+        border-top: 1px solid #999;
+    }
+    .scroll-table th:first-child{
+        border-left: 1px solid #999;
+    }
+    .scroll-table tr:first-child th:first-child{
+        z-index: 1;
+    }
+</style>
+<div class="scroll-table" style="margin-top: 50px;">
+    <table>
+        <tr>
+            <td valign="top">
+                <table align="left">
+                    <tr>
+                        <th>ア行～サ行</th>
+                    </tr>
+                    {% for student_table_left in students_table_left %}
+                    <tr>
+                        <td>
+                            <a href="{{ url_for('recorder.record', student_name=student_table_left.studentname) }}">{{ student_table_left.studentname_katakana }}</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </td>
+    
+            <td valign="top">
+                <table align="left">
+                    <tr>
+                        <th>タ行～ハ行</th>
+                    </tr>
+                    {% for student_table_center in students_table_center %}
+                    <tr>
+                        <td>
+                            <a href="{{ url_for('recorder.record', student_name=student_table_center.studentname) }}">{{ student_table_center.studentname_katakana }}</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </td>
+            <td valign="top">
+                <table>
+                    <tr>
+                        <th>マ行～ワ行</th>
+                    </tr>
+                    {% for student_table_right in students_table_right %}
+                    <tr>
+                        <td>
+                            <a href="{{ url_for('recorder.record', student_name=student_table_right.studentname) }}">{{ student_table_right.studentname_katakana }}</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<div style="margin-top: 30px;">
+    <table border="1">
+        {% if student_records %}
+            <tr>【自習中】</tr>
+        {% endif %}
+        {% for student_record in student_records %}
+        <tr>
+            <td>
+                <a href="{{ url_for('recorder.record', student_name=student_record.studentname) }}">{{ student_record.studentname }}</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
 {% endblock %}

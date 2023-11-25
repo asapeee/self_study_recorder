@@ -17,6 +17,8 @@ login_manager.login_message = ''
 def create_app(config_key):
     app = Flask(__name__)
 
+    app.jinja_env.filters['zip'] = zip
+
     app.config.from_object(config[config_key])
 
     # app.config.from_mapping(

@@ -11,7 +11,7 @@ class Student(db.Model, UserMixin):
 
     id = db.Column(db.Integer, primary_key=True)
     studentname = db.Column(db.String, index=True)
-    studentname_hiragana = db.Column(db.String, index=True)
+    studentname_katakana = db.Column(db.String, index=True)
     student_records = db.relationship('StudentRecord', backref='student', order_by='desc(StudentRecord.id)')
     student_month_records = db.relationship('StudentMonthRecord', backref='student', order_by='desc(StudentMonthRecord.id)')
 

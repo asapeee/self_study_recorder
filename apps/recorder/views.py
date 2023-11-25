@@ -9,7 +9,7 @@ from pathlib import Path
 from apps.app import db
 from apps.crud.models import Student, Administrator
 from apps.recorder.models import StudentRecord, StudentMonthRecord
-from apps.recorder.forms import MyPageForm, StartForm, FinishForm
+from apps.recorder.forms import StartForm, FinishForm
 from flask import (
     Blueprint,
     render_template,
@@ -43,15 +43,20 @@ def index():
     year_month = year + '_' + month
     student_month_ranking = StudentMonthRecord.query.filter_by(year_month=year_month).order_by(StudentMonthRecord.total_time.desc()).limit(3).all()
     student_records = StudentRecord.query.filter(StudentRecord.finished_at==None).all()
-    mypage_form = MyPageForm()
-    if mypage_form.validate_on_submit():
-        studentname_hiragana = mypage_form.studentname_hiragana.data
-        student = Student.query.filter_by(studentname_hiragana=studentname_hiragana).first()
-        if student is not None:
-            return redirect(url_for('recorder.record', student_name=student.studentname))
-        else:
-            flash("その生徒はいません。")
-    return render_template('recorder/index.html', mypage_form=mypage_form, month=month, student_month_ranking=student_month_ranking, student_records=student_records)
+    students_table = Student.query.order_by(Student.studentname_katakana).all()
+
+    for i, student in enumerate(students_table, 1):
+        if student.studentname_katakana[0] == 'タ':
+            index_ta = i
+
+    for j, student in enumerate(students_table, 1):
+        if student.studentname_katakana[0] == 'マ':
+            index_ma = j
+    
+    students_table_left = Student.query.order_by(Student.studentname_katakana).limit(index_ta - 1).all()
+    students_table_center = Student.query.order_by(Student.studentname_katakana).limit(index_ma - index_ta).offset(index_ta - 1).all()
+    students_table_right = Student.query.order_by(Student.studentname_katakana).offset(index_ma -1).all()
+    return render_template('recorder/index.html', month=month, student_month_ranking=student_month_ranking, student_records=student_records, students_table_left=students_table_left, students_table_center=students_table_center, students_table_right=students_table_right)
 
 
 @rc.route('/record/<student_name>', methods=['GET', 'POST'])
