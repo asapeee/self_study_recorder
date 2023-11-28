@@ -48,10 +48,12 @@ def index():
     for i, student in enumerate(students_table, 1):
         if student.studentname_katakana[0] == 'タ':
             index_ta = i
+            break
 
     for j, student in enumerate(students_table, 1):
         if student.studentname_katakana[0] == 'マ':
             index_ma = j
+            break
     
     students_table_left = Student.query.order_by(Student.studentname_katakana).limit(index_ta - 1).all()
     students_table_center = Student.query.order_by(Student.studentname_katakana).limit(index_ma - index_ta).offset(index_ta - 1).all()
