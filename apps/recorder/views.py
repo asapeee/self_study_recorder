@@ -23,8 +23,11 @@ from flask import (
 from PIL import Image
 from sqlalchemy.exc import SQLAlchemyError
 from flask_login import current_user, login_required
-
+from apps.auth.forms import LoginForm
+from flask_login import login_user, logout_user
 import matplotlib.pyplot as plt
+
+
 def fig_to_base64_image(fig):
     io = BytesIO()
     fig.savefig(io, format="png")
@@ -33,10 +36,26 @@ def fig_to_base64_image(fig):
 
     return base64_image
 
+
 rc = Blueprint('recorder', __name__, template_folder='templates')
 
 
 @rc.route('/', methods=['GET', 'POST'])
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        administrator = Administrator.query.filter_by(administratorname=form.administratorname.data).first()
+
+        if administrator is not None and administrator.verify_password(form.password.data):
+            login_user(administrator)
+            return redirect(url_for('index'))
+        
+        flash('管理者名かパスワードが不正です．')
+    
+    return render_template('auth/login.html', form=form)
+
+
+@rc.route('/record', methods=['GET', 'POST'])
 def index():
     month = str(datetime.now().month)
     year = str(datetime.now().year)
