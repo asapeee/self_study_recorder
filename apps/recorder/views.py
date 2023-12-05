@@ -48,7 +48,7 @@ def login():
 
         if administrator is not None and administrator.verify_password(form.password.data):
             login_user(administrator)
-            return redirect(url_for('index'))
+            return redirect(url_for('recorder.index'))
         
         flash('管理者名かパスワードが不正です．')
     
