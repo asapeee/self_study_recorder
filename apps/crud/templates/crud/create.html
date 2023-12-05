@@ -10,15 +10,9 @@
 >
     {{ form.csrf_token }}
     <p>
-        {{ form.studentname.label }} {{ form.studentname(placeholder='生徒名') }}
+        {{ form.studentname.label }} {{ form.studentname(placeholder='生徒名(カタカナ)') }}
     </p>
     {% for error in form.studentname.errors %}
-    <span style="color: red;">{{ error }}</span>
-    {% endfor %}
-    <p>
-        {{ form.studentname_katakana.label }} {{ form.studentname_katakana(placeholder='生徒名(カタカナ)') }}
-    </p>
-    {% for error in form.studentname_katakana.errors %}
     <span style="color: red;">{{ error }}</span>
     {% endfor %}
     <p>{{ form.submit() }}</p>

@@ -27,7 +27,6 @@ def create_student():
     if form.validate_on_submit():
         student = Student(
             studentname=form.studentname.data,
-            studentname_katakana=form.studentname_katakana.data,
         )
 
         db.session.add(student)
@@ -41,7 +40,7 @@ def create_student():
 @crud.route('/students')
 @login_required
 def students():
-    students = Student.query.order_by(Student.studentname_katakana).all()
+    students = Student.query.order_by(Student.studentname).all()
     return render_template('crud/index.html', students=students)
 
 

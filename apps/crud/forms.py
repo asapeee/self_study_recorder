@@ -5,15 +5,6 @@ from wtforms.validators import DataRequired, length
 
 class StudentForm(FlaskForm):
     studentname = StringField(
-        '生徒名',
-        validators=[
-            DataRequired(message='生徒名は必須です．'),
-            length(max=30, message='30文字以内で入力してください．'),
-        ],
-        
-    )
-
-    studentname_katakana = StringField(
         '生徒名(カタカナ)',
         validators=[
             DataRequired(message='生徒名(カタカナ)は必須です．'),
@@ -21,6 +12,7 @@ class StudentForm(FlaskForm):
         ],
         
     )
+
 
     submit = SubmitField('新規登録')
 
