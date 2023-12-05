@@ -10,7 +10,7 @@ class BaseConfig:
 
 
 class LocalConfig(BaseConfig):
-    SQLALCHEMY_DATABASE_URI = f"postgresql://self_study_recorder_db_user:yP1bSVmDdFdMdAvzuuoMYw3EU8dmIdwV@dpg-clmout4jtl8s73a73io0-a.singapore-postgres.render.com/self_study_recorder_database"
+    SQLALCHEMY_DATABASE_URI = f"postgresql://self_study_recorder_db_user:yP1bSVmDdFdMdAvzuuoMYw3EU8dmIdwV@dpg-clmout4jtl8s73a73io0-a.singapore-postgres.render.com/self_study_recorder_db"
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_ECHO = True
 
