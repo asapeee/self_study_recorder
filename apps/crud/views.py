@@ -50,9 +50,9 @@ def check_student(student_name):
     delete_student_form = DeleteStudentForm()
     date = datetime.now().date()
     student = Student.query.filter_by(studentname=student_name).first()
-    student_day_records = StudentRecord.query.filter_by(student_id=student.id).filter(StudentRecord.started_at.like(f"%{date}%")).all()
+    student_day_records = StudentRecord.query.filter_by(student_id=student.id).filter(StudentRecord.started_at.like(date)).all()
     year = datetime.now().year
-    student_records = StudentRecord.query.filter_by(student_id=student.id).order_by(StudentRecord.started_at.desc()).filter(StudentRecord.started_at.like(f"%{year}%")).all()
+    student_records = StudentRecord.query.filter_by(student_id=student.id).order_by(StudentRecord.started_at.desc()).filter(StudentRecord.started_at.like(year)).all()
     return render_template('crud/check.html', student=student, student_records=student_records, student_day_records=student_day_records, delete_student_form=delete_student_form)
 
 
