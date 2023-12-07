@@ -58,8 +58,8 @@ def login():
 
 @rc.route('/record', methods=['GET', 'POST'])
 def index():
-    month = str(datetime.now(pytz.timezone('Asia/Tokyo')).month)
-    year = str(datetime.now(pytz.timezone('Asia/Tokyo')).year)
+    month = str((datetime.utcnow() + datetime.timedelta(hours=9)).month)
+    year = str((datetime.utcnow() + datetime.timedelta(hours=9)).year)
     year_month = year + '_' + month
     student_month_ranking = StudentMonthRecord.query.filter_by(year_month=year_month).order_by(StudentMonthRecord.total_time.desc()).limit(3).all()
     student_records = StudentRecord.query.filter(StudentRecord.finished_at==None).all()
@@ -86,8 +86,8 @@ def record(student_name):
     finish_form = FinishForm()
     student = Student.query.filter_by(studentname=student_name).first()
     student_record = StudentRecord.query.order_by((StudentRecord.started_at.desc())).filter_by(student_id=student.id).first()
-    date = datetime.now(pytz.timezone('Asia/Tokyo')).date()
-    student_day_records = StudentRecord.query.filter_by(student_id=student.id).filter(f"%{date}%" in f"%{StudentRecord.started_at}%").all()
+    date = (datetime.utcnow() + datetime.timedelta(hours=9)).date()
+    student_day_records = StudentRecord.query.filter_by(student_id=student.id).filter(f"{date}" in f"{StudentRecord.started_at}").all()
 
 
 
@@ -96,8 +96,8 @@ def record(student_name):
     y = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
 
-    year = datetime.now(pytz.timezone('Asia/Tokyo')).year
-    student_month_records = StudentMonthRecord.query.filter_by(student_id=student.id).filter(f"%{year}%" in f"%{StudentMonthRecord.year_month}%").all()
+    year = (datetime.utcnow() + datetime.timedelta(hours=9)).year
+    student_month_records = StudentMonthRecord.query.filter_by(student_id=student.id).filter(f"{year}" in f"{StudentMonthRecord.year_month}").all()
 
 
     # year_monthとxの月が一致するときにyにtotaltimeを代入
@@ -120,10 +120,10 @@ def start(student_name):
     student_record = StudentRecord(
         student_id=student.id,
         studentname=student.studentname,
-        started_at=datetime.now(pytz.timezone('Asia/Tokyo')).replace(microsecond=0)
+        started_at=(datetime.utcnow() + datetime.timedelta(hours=9)).replace(microsecond=0)
     )
 
-    year_month = str(datetime.now(pytz.timezone('Asia/Tokyo')).year) + '_' + str(datetime.now(pytz.timezone('Asia/Tokyo')).month)
+    year_month = str((datetime.utcnow() + datetime.timedelta(hours=9)).year) + '_' + str((datetime.utcnow() + datetime.timedelta(hours=9)).month)
 
     if StudentMonthRecord.query.filter_by(student_id=student.id, year_month=year_month).first() is None:
         student_month_record = StudentMonthRecord(
@@ -144,13 +144,13 @@ def start(student_name):
 def finish(student_name):
     student = Student.query.filter_by(studentname=student_name).first()
     student_record = StudentRecord.query.order_by((StudentRecord.started_at.desc())).filter_by(student_id=student.id).first()
-    student_record.finished_at = datetime.now(pytz.timezone('Asia/Tokyo')).replace(microsecond=0)
+    student_record.finished_at = (datetime.utcnow() + datetime.timedelta(hours=9)).replace(microsecond=0)
     study_time = student_record.finished_at - student_record.started_at
     student_record.study_time = study_time.seconds
     db.session.add(student_record)
     db.session.commit()
     
-    year_month = str(datetime.now(pytz.timezone('Asia/Tokyo')).year) + '_' + str(datetime.now(pytz.timezone('Asia/Tokyo')).month)
+    year_month = str((datetime.utcnow() + datetime.timedelta(hours=9)).year) + '_' + str((datetime.utcnow() + datetime.timedelta(hours=9)).month)
     student_month_record = StudentMonthRecord.query.filter_by(student_id=student.id, year_month=year_month).first()
 
     if student_month_record is not None:
