@@ -62,21 +62,9 @@ def index():
     year_month = year + '_' + month
     student_month_ranking = StudentMonthRecord.query.filter_by(year_month=year_month).order_by(StudentMonthRecord.total_time.desc()).limit(3).all()
     student_records = StudentRecord.query.filter(StudentRecord.finished_at==None).all()
-    students_table = Student.query.order_by(Student.studentname).all()
-
-    for i, student in enumerate(students_table, 1):
-        if student.studentname[0] == 'タ':
-            index_ta = i
-            break
-
-    for j, student in enumerate(students_table, 1):
-        if student.studentname[0] == 'マ':
-            index_ma = j
-            break
-    
-    students_table_left = Student.query.order_by(Student.studentname).limit(index_ta - 1).all()
-    students_table_center = Student.query.order_by(Student.studentname).limit(index_ma - index_ta).offset(index_ta - 1).all()
-    students_table_right = Student.query.order_by(Student.studentname).offset(index_ma -1).all()
+    students_table_left = Student.query.order_by(Student.studentname).filter(Student.studentname[0] < 'タ').all()
+    students_table_center = Student.query.order_by(Student.studentname).filter('タ' <= Student.studentname[0] < 'マ').all()
+    students_table_right = Student.query.order_by(Student.studentname).filter('マ' <= Student.studentname[0]).all()
     return render_template('recorder/index.html', month=month, student_month_ranking=student_month_ranking, student_records=student_records, students_table_left=students_table_left, students_table_center=students_table_center, students_table_right=students_table_right)
 
 
