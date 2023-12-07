@@ -1,7 +1,7 @@
 import base64
 from io import BytesIO
 
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, time
 
 import uuid
 from pathlib import Path
@@ -87,7 +87,7 @@ def record(student_name):
     student = Student.query.filter_by(studentname=student_name).first()
     student_record = StudentRecord.query.order_by((StudentRecord.started_at.desc())).filter_by(student_id=student.id).first()
     date = (datetime.utcnow() + timedelta(hours=9)).date()
-    student_day_records = StudentRecord.query.filter_by(student_id=student.id).filter(f"{date}" in f"{StudentRecord.started_at}").all()
+    student_day_records = StudentRecord.query.filter_by(student_id=student.id).filter(date <= StudentRecord.started_at < date+timedelta(days=1)).all()
 
 
 
