@@ -89,12 +89,16 @@ def record(student_name):
     date = datetime.now(pytz.timezone('Asia/Tokyo')).date()
     student_day_records = StudentRecord.query.filter_by(student_id=student.id).filter(f"%{date}%" in f"%{StudentRecord.started_at}%").all()
 
+
+
     fig = plt.figure(figsize=(12, 4))
     x = [4, 5, 6, 7, 8, 9, 10, 11, 12, 1, 2, 3]
     y = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
+
     year = datetime.now(pytz.timezone('Asia/Tokyo')).year
     student_month_records = StudentMonthRecord.query.filter_by(student_id=student.id).filter(f"%{year}%" in f"%{StudentMonthRecord.year_month}%").all()
+
 
     # year_monthとxの月が一致するときにyにtotaltimeを代入
     for student_month_record in student_month_records:
