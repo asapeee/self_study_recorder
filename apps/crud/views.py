@@ -6,6 +6,7 @@ from apps.recorder.models import StudentRecord, StudentMonthRecord
 from flask_login import login_required
 
 from datetime import datetime
+import pytz
 crud = Blueprint(
     'crud',
     __name__,
@@ -48,11 +49,11 @@ def students():
 @login_required
 def check_student(student_name):
     delete_student_form = DeleteStudentForm()
-    date = datetime.now().date()
+    date = datetime.now(pytz.timezone('Asia/Tokyo')).date()
     student = Student.query.filter_by(studentname=student_name).first()
-    student_day_records = StudentRecord.query.filter_by(student_id=student.id).filter(f"%{StudentRecord.started_at}%" in (f"%{date}%")).all()
-    year = datetime.now().year
-    student_records = StudentRecord.query.filter_by(student_id=student.id).order_by(StudentRecord.started_at.desc()).filter(f"%{StudentRecord.started_at}%" in (f"%{year}%")).all()
+    student_day_records = StudentRecord.query.filter_by(student_id=student.id).filter(f"%{date}%" in f"%{StudentRecord.started_at}%").all()
+    year = datetime.now(pytz.timezone('Asia/Tokyo')).year
+    student_records = StudentRecord.query.filter_by(student_id=student.id).order_by(StudentRecord.started_at.desc()).filter(f"%{year}%" in f"%{StudentRecord.started_at}%").all()
     return render_template('crud/check.html', student=student, student_records=student_records, student_day_records=student_day_records, delete_student_form=delete_student_form)
 
 

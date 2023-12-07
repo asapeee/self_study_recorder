@@ -9,15 +9,11 @@
 <table border="1">
     <tr>
         <th>生徒名</th>
-        <th>生徒名(カタカナ)</th>
     </tr>
     {% for student in students %}
     <tr>
         <td>
             <a href="{{ url_for('crud.check_student', student_name=student.studentname) }}">{{ student.studentname }}</a>
-        </td>
-        <td>
-            {{ student.studentname}}
         </td>
     </tr>
     {% endfor %}

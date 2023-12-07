@@ -26,6 +26,7 @@ from flask_login import current_user, login_required
 from apps.auth.forms import LoginForm
 from flask_login import login_user, logout_user
 import matplotlib.pyplot as plt
+import pytz
 
 
 def fig_to_base64_image(fig):
@@ -57,14 +58,25 @@ def login():
 
 @rc.route('/record', methods=['GET', 'POST'])
 def index():
-    month = str(datetime.now().month)
-    year = str(datetime.now().year)
+    month = str(datetime.now(pytz.timezone('Asia/Tokyo')).month)
+    year = str(datetime.now(pytz.timezone('Asia/Tokyo')).year)
     year_month = year + '_' + month
     student_month_ranking = StudentMonthRecord.query.filter_by(year_month=year_month).order_by(StudentMonthRecord.total_time.desc()).limit(3).all()
     student_records = StudentRecord.query.filter(StudentRecord.finished_at==None).all()
-    students_table_left = Student.query.order_by(Student.studentname).filter(Student.studentname[0] < 'タ').all()
-    students_table_center = Student.query.order_by(Student.studentname).filter('タ' <= Student.studentname[0] < 'マ').all()
-    students_table_right = Student.query.order_by(Student.studentname).filter('マ' <= Student.studentname[0]).all()
+    students_table = Student.query.order_by(Student.studentname).all()
+
+    count_left = 0
+    count_center = 0
+
+    for i, student in enumerate(students_table):
+        if student.studentname[0] < 'タ':
+            count_left += 1
+        elif 'タ' <= student.studentname[0] < 'マ':
+            count_center += 1
+    
+    students_table_left = Student.query.order_by(Student.studentname).limit(count_left).all()
+    students_table_center = Student.query.order_by(Student.studentname).limit(count_center).offset(count_left).all()
+    students_table_right = Student.query.order_by(Student.studentname).offset(count_left + count_center).all()
     return render_template('recorder/index.html', month=month, student_month_ranking=student_month_ranking, student_records=student_records, students_table_left=students_table_left, students_table_center=students_table_center, students_table_right=students_table_right)
 
 
@@ -74,15 +86,15 @@ def record(student_name):
     finish_form = FinishForm()
     student = Student.query.filter_by(studentname=student_name).first()
     student_record = StudentRecord.query.order_by((StudentRecord.started_at.desc())).filter_by(student_id=student.id).first()
-    date = datetime.now().date()
-    student_day_records = StudentRecord.query.filter_by(student_id=student.id).filter(StudentRecord.started_at.like(f"%{date}%")).all()
+    date = datetime.now(pytz.timezone('Asia/Tokyo')).date()
+    student_day_records = StudentRecord.query.filter_by(student_id=student.id).filter(f"%{date}%" in f"%{StudentRecord.started_at}%").all()
 
     fig = plt.figure(figsize=(12, 4))
     x = [4, 5, 6, 7, 8, 9, 10, 11, 12, 1, 2, 3]
     y = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
-    year = datetime.now().year
-    student_month_records = StudentMonthRecord.query.filter_by(student_id=student.id).filter(StudentMonthRecord.year_month.like(f"%{year}%")).all()
+    year = datetime.now(pytz.timezone('Asia/Tokyo')).year
+    student_month_records = StudentMonthRecord.query.filter_by(student_id=student.id).filter(f"%{year}%" in f"%{StudentMonthRecord.year_month}%").all()
 
     # year_monthとxの月が一致するときにyにtotaltimeを代入
     for student_month_record in student_month_records:
@@ -104,10 +116,10 @@ def start(student_name):
     student_record = StudentRecord(
         student_id=student.id,
         studentname=student.studentname,
-        started_at=datetime.now().replace(microsecond=0)
+        started_at=datetime.now(pytz.timezone('Asia/Tokyo')).replace(microsecond=0)
     )
 
-    year_month = str(datetime.now().year) + '_' + str(datetime.now().month)
+    year_month = str(datetime.now(pytz.timezone('Asia/Tokyo')).year) + '_' + str(datetime.now(pytz.timezone('Asia/Tokyo')).month)
 
     if StudentMonthRecord.query.filter_by(student_id=student.id, year_month=year_month).first() is None:
         student_month_record = StudentMonthRecord(
@@ -128,13 +140,13 @@ def start(student_name):
 def finish(student_name):
     student = Student.query.filter_by(studentname=student_name).first()
     student_record = StudentRecord.query.order_by((StudentRecord.started_at.desc())).filter_by(student_id=student.id).first()
-    student_record.finished_at = datetime.now().replace(microsecond=0)
+    student_record.finished_at = datetime.now(pytz.timezone('Asia/Tokyo')).replace(microsecond=0)
     study_time = student_record.finished_at - student_record.started_at
     student_record.study_time = study_time.seconds
     db.session.add(student_record)
     db.session.commit()
     
-    year_month = str(datetime.now().year) + '_' + str(datetime.now().month)
+    year_month = str(datetime.now(pytz.timezone('Asia/Tokyo')).year) + '_' + str(datetime.now(pytz.timezone('Asia/Tokyo')).month)
     student_month_record = StudentMonthRecord.query.filter_by(student_id=student.id, year_month=year_month).first()
 
     if student_month_record is not None:
