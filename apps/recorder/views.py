@@ -75,7 +75,7 @@ def index():
     
     students_table_left = Student.query.order_by(Student.studentname).limit(count_left).all()
     students_table_center = Student.query.order_by(Student.studentname).limit(count_center).offset(count_left).all()
-    students_table_right = Student.query.order_by(Student.studentname).offset(count_center).all()
+    students_table_right = Student.query.order_by(Student.studentname).offset(count_left + count_center).all()
     return render_template('recorder/index.html', month=month, student_month_ranking=student_month_ranking, student_records=student_records, students_table_left=students_table_left, students_table_center=students_table_center, students_table_right=students_table_right)
 
 
@@ -86,14 +86,14 @@ def record(student_name):
     student = Student.query.filter_by(studentname=student_name).first()
     student_record = StudentRecord.query.order_by((StudentRecord.started_at.desc())).filter_by(student_id=student.id).first()
     date = datetime.now().date()
-    student_day_records = StudentRecord.query.filter_by(student_id=student.id).filter(StudentRecord.started_at.like(f"%{date}%")).all()
+    student_day_records = StudentRecord.query.filter_by(student_id=student.id).filter(f"%{StudentRecord.started_at}%" in (f"%{date}%")).all()
 
     fig = plt.figure(figsize=(12, 4))
     x = [4, 5, 6, 7, 8, 9, 10, 11, 12, 1, 2, 3]
     y = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
     year = datetime.now().year
-    student_month_records = StudentMonthRecord.query.filter_by(student_id=student.id).filter(StudentMonthRecord.year_month.like(f"%{year}%")).all()
+    student_month_records = StudentMonthRecord.query.filter_by(student_id=student.id).filter(f"%{StudentMonthRecord.year_month}%" in (f"%{year}%")).all()
 
     # year_monthとxの月が一致するときにyにtotaltimeを代入
     for student_month_record in student_month_records:
