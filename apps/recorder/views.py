@@ -88,7 +88,7 @@ def record(student_name):
     student_record = StudentRecord.query.order_by((StudentRecord.started_at.desc())).filter_by(student_id=student.id).first()
     date = (datetime.utcnow() + timedelta(hours=9)).date()
     date = date = datetime.combine(date, time())
-    student_day_records = StudentRecord.query.filter_by(student_id=student.id).filter(date <= StudentRecord.started_at).all()
+    student_day_records = StudentRecord.query.filter_by(student_id=student.id).filter(date <= StudentRecord.started_at).filter(StudentRecord.started_at < date+timedelta(days=1)).all()
 
 
 
@@ -98,7 +98,7 @@ def record(student_name):
 
 
     year = (datetime.utcnow() + timedelta(hours=9)).year
-    student_month_records = StudentMonthRecord.query.filter_by(student_id=student.id).filter(f"{year}" in f"{StudentMonthRecord.year_month}").all()
+    student_month_records = StudentMonthRecord.query.filter_by(student_id=student.id).filter(str(year) in StudentMonthRecord.year_month).all()
 
 
     # year_monthとxの月が一致するときにyにtotaltimeを代入
