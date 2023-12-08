@@ -60,8 +60,7 @@ def login():
 def index():
     month = str((datetime.utcnow() + timedelta(hours=9)).month)
     year = str((datetime.utcnow() + timedelta(hours=9)).year)
-    year_month = year + '_' + month
-    student_month_ranking = StudentMonthRecord.query.filter_by(year_month=year_month).order_by(StudentMonthRecord.total_time.desc()).limit(3).all()
+    student_month_ranking = StudentMonthRecord.query.filter_by(year=year, month=month).order_by(StudentMonthRecord.total_time.desc()).limit(3).all()
     student_records = StudentRecord.query.filter(StudentRecord.finished_at==None).all()
     students_table = Student.query.order_by(Student.studentname).all()
 
@@ -90,21 +89,19 @@ def record(student_name):
     date = date = datetime.combine(date, time())
     student_day_records = StudentRecord.query.filter_by(student_id=student.id).filter(date <= StudentRecord.started_at).filter(StudentRecord.started_at < date+timedelta(days=1)).all()
 
-
-
     fig = plt.figure(figsize=(12, 4))
     x = [4, 5, 6, 7, 8, 9, 10, 11, 12, 1, 2, 3]
     y = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
-
     year = (datetime.utcnow() + timedelta(hours=9)).year
-    student_month_records = StudentMonthRecord.query.filter_by(student_id=student.id).filter(str(year) in StudentMonthRecord.year_month).all()
+    month = (datetime.utcnow() + timedelta(hours=9)).month
+    student_month_records = StudentMonthRecord.query.filter_by(student_id=student.id, year=year, month=month).all()
 
 
     # year_monthとxの月が一致するときにyにtotaltimeを代入
     for student_month_record in student_month_records:
         for idx, month in enumerate(x):
-            if str(month) == student_month_record.year_month[-2:]:
+            if month == student_month_record.month:
                 y[idx] = (student_month_record.total_time / 3600)
     plt.xticks(x, rotation=90)
     plt.bar(x, y)
@@ -124,13 +121,15 @@ def start(student_name):
         started_at=(datetime.utcnow() + timedelta(hours=9)).replace(microsecond=0)
     )
 
-    year_month = str((datetime.utcnow() + timedelta(hours=9)).year) + '_' + str((datetime.utcnow() + timedelta(hours=9)).month)
+    year = (datetime.utcnow() + timedelta(hours=9)).year
+    month = (datetime.utcnow() + timedelta(hours=9)).month
 
-    if StudentMonthRecord.query.filter_by(student_id=student.id, year_month=year_month).first() is None:
+    if StudentMonthRecord.query.filter_by(student_id=student.id, year=year, month=month).first() is None:
         student_month_record = StudentMonthRecord(
             student_id=student.id,
             studentname=student.studentname,
-            year_month=year_month
+            year=year,
+            month=month
         )
         db.session.add(student_month_record)
         db.session.commit()
@@ -151,8 +150,9 @@ def finish(student_name):
     db.session.add(student_record)
     db.session.commit()
     
-    year_month = str((datetime.utcnow() + timedelta(hours=9)).year) + '_' + str((datetime.utcnow() + timedelta(hours=9)).month)
-    student_month_record = StudentMonthRecord.query.filter_by(student_id=student.id, year_month=year_month).first()
+    year = (datetime.utcnow() + timedelta(hours=9)).year
+    month = (datetime.utcnow() + timedelta(hours=9)).month
+    student_month_record = StudentMonthRecord.query.filter_by(student_id=student.id, year=year, month=month).first()
 
     if student_month_record is not None:
         student_month_record.total_time = student_month_record.total_time + study_time.seconds

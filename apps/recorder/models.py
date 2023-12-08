@@ -18,5 +18,6 @@ class StudentMonthRecord(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     student_id = db.Column(db.Integer, db.ForeignKey('students.id'))
     studentname = db.Column(db.String)
-    year_month = db.Column(db.String)
+    year = db.Column(db.Integer)
+    month = db.Column(db.Integer)
     total_time = db.Column(db.Float, default=0)
