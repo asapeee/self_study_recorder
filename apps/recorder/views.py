@@ -57,6 +57,7 @@ def login():
 
 
 @rc.route('/record', methods=['GET', 'POST'])
+@login_required
 def index():
     month = str((datetime.utcnow() + timedelta(hours=9)).month)
     year = str((datetime.utcnow() + timedelta(hours=9)).year)
@@ -80,6 +81,7 @@ def index():
 
 
 @rc.route('/record/<student_name>', methods=['GET', 'POST'])
+@login_required
 def record(student_name):
     start_form = StartForm()
     finish_form = FinishForm()
@@ -113,6 +115,7 @@ def record(student_name):
 
 
 @rc.route('/record/<student_name>/start', methods=['GET', 'POST'])
+@login_required
 def start(student_name):
     student = Student.query.filter_by(studentname=student_name).first()
     student_record = StudentRecord(
@@ -141,6 +144,7 @@ def start(student_name):
 
 
 @rc.route('/record/<student_name>/finish', methods=['GET', 'POST'])
+@login_required
 def finish(student_name):
     student = Student.query.filter_by(studentname=student_name).first()
     student_record = StudentRecord.query.order_by((StudentRecord.started_at.desc())).filter_by(student_id=student.id).first()
