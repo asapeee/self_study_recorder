@@ -27,7 +27,7 @@ def create_student():
     form = StudentForm()
     if form.validate_on_submit():
         studentname = form.studentname.data
-        studentname = studentname + '　' * (15 - studentname.size())
+        studentname = studentname + '　' * (15 - len(studentname))
         student = Student(
             studentname=studentname,
         )
