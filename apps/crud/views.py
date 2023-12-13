@@ -26,8 +26,10 @@ def index():
 def create_student():
     form = StudentForm()
     if form.validate_on_submit():
+        studentname = form.studentname.data
+        studentname = studentname + '　' * (15 - studentname.size())
         student = Student(
-            studentname=form.studentname.data,
+            studentname=studentname,
         )
 
         db.session.add(student)
