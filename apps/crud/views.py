@@ -54,7 +54,6 @@ def check_student(student_name):
     date = (datetime.utcnow() + timedelta(hours=9)).date()
     student = Student.query.filter_by(studentname=student_name).first()
     student_day_records = StudentRecord.query.filter_by(student_id=student.id).filter(date <= StudentRecord.started_at).filter(StudentRecord.started_at < date+timedelta(days=1)).all()
-    year = (datetime.utcnow() + timedelta(hours=9)).year
     student_records = StudentRecord.query.filter_by(student_id=student.id).order_by(StudentRecord.started_at.desc()).all()
     return render_template('crud/check.html', student=student, student_records=student_records, student_day_records=student_day_records, delete_student_form=delete_student_form)
 
@@ -89,6 +88,25 @@ def edit_student_record(student_name, student_records_id):
         if student_record.started_at < student_record.finished_at:
             student_record.study_time = (student_record.finished_at - student_record.started_at).seconds
             db.session.add(student_record)
+            db.session.commit()
+
+            year = (datetime.utcnow() + timedelta(hours=9)).year
+            month = (datetime.utcnow() + timedelta(hours=9)).month
+            str = f'{year}{month}01'
+            dte = datetime.strptime(str, '%Y%m%d')
+            if month == 12:
+                next_str = f'{year+1}0101'
+                next_dte = datetime.strptime(next_str, '%Y%m%d')
+            else:
+                next_str = f'{year}{month+1}01'
+                next_dte = datetime.strptime(next_str, '%Y%m%d')
+            student_records = StudentRecord.query.filter_by(studentname=student_name).filter(dte <= StudentRecord.started_at).filter(StudentRecord.started_at < next_dte).all()
+            total_time = 0
+            for student_record in student_records:
+                total_time += student_record.study_time.seconds
+            student_month_record = StudentMonthRecord.query.filter_by(studentneme=student_name, year=year, month=month).first()
+            student_month_record.total_time = total_time
+            db.session.add(student_month_record)
             db.session.commit()
             return redirect(url_for('crud.check_student', student_name=student_name))
         else:

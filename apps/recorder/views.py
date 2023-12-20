@@ -88,7 +88,7 @@ def record(student_name):
     student = Student.query.filter_by(studentname=student_name).first()
     student_record = StudentRecord.query.order_by((StudentRecord.started_at.desc())).filter_by(student_id=student.id).first()
     date = (datetime.utcnow() + timedelta(hours=9)).date()
-    date = date = datetime.combine(date, time())
+    date = datetime.combine(date, time())
     student_day_records = StudentRecord.query.filter_by(student_id=student.id).filter(date <= StudentRecord.started_at).filter(StudentRecord.started_at < date+timedelta(days=1)).all()
 
     fig = plt.figure(figsize=(12, 4))
