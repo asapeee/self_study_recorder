@@ -90,8 +90,8 @@ def edit_student_record(student_name, student_records_id):
             db.session.add(student_record)
             db.session.commit()
 
-            year = (datetime.utcnow() + timedelta(hours=9)).year
-            month = (datetime.utcnow() + timedelta(hours=9)).month
+            year = (student_record.started_at).year
+            month = (student_record.started_at).month
             str = f'{year}{month}01'
             dte = datetime.strptime(str, '%Y%m%d')
             if month == 12:
@@ -103,7 +103,7 @@ def edit_student_record(student_name, student_records_id):
             student_records = StudentRecord.query.filter_by(studentname=student_name).filter(dte <= StudentRecord.started_at).filter(StudentRecord.started_at < next_dte).all()
             total_time = 0
             for student_record in student_records:
-                total_time += student_record.study_time.seconds
+                total_time += student_record.study_time
             student_month_record = StudentMonthRecord.query.filter_by(studentneme=student_name, year=year, month=month).first()
             student_month_record.total_time = total_time
             db.session.add(student_month_record)
