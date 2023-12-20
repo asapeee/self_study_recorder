@@ -104,7 +104,7 @@ def edit_student_record(student_name, student_records_id):
             total_time = 0
             for student_record in student_records:
                 total_time += student_record.study_time
-            student_month_record = StudentMonthRecord.query.filter_by(studentneme=student_name, year=year, month=month).first()
+            student_month_record = StudentMonthRecord.query.filter_by(studentname=student_name, year=year, month=month).first()
             student_month_record.total_time = total_time
             db.session.add(student_month_record)
             db.session.commit()
