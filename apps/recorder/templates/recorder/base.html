@@ -19,14 +19,14 @@
                     <span class="nav-link">{{ current_user.username }}</span>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('auth.login') }}">管理者画面</a>
+                    <a class="nav-link" href="{{ url_for('recorder.login') }}">管理者画面</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{{ url_for('auth.logout') }}">ログアウト</a>
                 </li>
                 {% else %}
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('auth.login') }}">管理者画面</a>
+                    <a class="nav-link" href="{{ url_for('recorder.login') }}">管理者画面</a>
                 </li>
                 </li>
                 {% endif %}
