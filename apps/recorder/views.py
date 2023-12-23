@@ -53,7 +53,7 @@ def login():
         
         flash('管理者名かパスワードが不正です．')
     
-    return render_template('auth/login.html', form=form)
+    return render_template('recorder/login.html', form=form)
 
 
 @rc.route('/record', methods=['GET', 'POST'])
