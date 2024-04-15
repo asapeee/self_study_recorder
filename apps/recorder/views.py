@@ -41,7 +41,7 @@ def fig_to_base64_image(fig):
 rc = Blueprint('recorder', __name__, template_folder='templates')
 
 
-@rc.route('/', methods=['GET', 'POST'])
+@rc.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
     if form.validate_on_submit():
@@ -56,7 +56,7 @@ def login():
     return render_template('recorder/login.html', form=form)
 
 
-@rc.route('/record', methods=['GET', 'POST'])
+@rc.route('/', methods=['GET', 'POST'])
 @login_required
 def index():
     month = str((datetime.utcnow() + timedelta(hours=9)).month)
@@ -80,7 +80,7 @@ def index():
     return render_template('recorder/index.html', month=month, student_month_ranking=student_month_ranking, student_records=student_records, students_table_left=students_table_left, students_table_center=students_table_center, students_table_right=students_table_right)
 
 
-@rc.route('/record/<student_name>', methods=['GET', 'POST'])
+@rc.route('/<student_name>', methods=['GET', 'POST'])
 @login_required
 def record(student_name):
     start_form = StartForm()
@@ -114,7 +114,7 @@ def record(student_name):
     return render_template('recorder/record.html', student=student, start_form=start_form, finish_form=finish_form, student_record=student_record, student_day_records=student_day_records, img=img)
 
 
-@rc.route('/record/<student_name>/start', methods=['GET', 'POST'])
+@rc.route('/<student_name>/start', methods=['GET', 'POST'])
 @login_required
 def start(student_name):
     student = Student.query.filter_by(studentname=student_name).first()
@@ -143,7 +143,7 @@ def start(student_name):
     return redirect(url_for('recorder.record', student_name=student_name))
 
 
-@rc.route('/record/<student_name>/finish', methods=['GET', 'POST'])
+@rc.route('/<student_name>/finish', methods=['GET', 'POST'])
 @login_required
 def finish(student_name):
     student = Student.query.filter_by(studentname=student_name).first()
