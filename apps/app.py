@@ -42,11 +42,11 @@ def create_app(config_key):
 
     from apps.auth import views as auth_views
 
-    app.register_blueprint(auth_views.auth, url_prefix='/auth')
+    app.register_blueprint(auth_views.auth)
 
     from apps.recorder import views as rc_views
 
-    app.register_blueprint(rc_views.rc)
+    app.register_blueprint(rc_views.rc, url_prefix='/record')
 
     app.register_error_handler(404, page_not_found)
     app.register_error_handler(500, internal_server_error)
