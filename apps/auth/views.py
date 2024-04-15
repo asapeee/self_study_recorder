@@ -13,11 +13,6 @@ auth = Blueprint(
 )
 
 
-@auth.route('/')
-def index():
-    return render_template('auth/index.html')
-
-
 @auth.route('/signup', methods=['GET', 'POST'])
 def signup():
     form = SignUpForm()
@@ -38,7 +33,7 @@ def signup():
     return render_template('auth/signup.html', form=form)
 
 
-@auth.route('/login', methods=['GET', 'POST'])
+@auth.route('/', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
     if form.validate_on_submit():
